@@ -4,13 +4,13 @@ The demo is planned and organized in a way that makes it easy to follow in a loc
 
 *Note 1:  It is expected that the workstation already has **kubectl** and **helm** installed. If not, they could be installed by following the steps outlined here (<https://kubernetes.io/docs/tasks/tools/#kubectl>) for **kubectl** and here (<https://github.com/helm/helm/releases>) for **helm**.*
 
-*Note 2: It is expected that on the workstation there is a context defined for the target cluster and it is set as default.*
+*Note 2: It is expected that on the workstation, there is a context defined for the target cluster, and it is set as the default.*
 
 ## Requirements
 
 It is expected that there is a Load Balancer (assumed **MetalLB**), a local git-based solution (assumed **Gitea**), and a CI/CD solution (assumed **Jenkins**). In addition, a read-write access to a container registry (assumed **Docker Hub**) is expected.
 
-Detailed explanation on how to prepare an evironment like the one assumed and used, check the **Preparation** document, available [here](../preparation/preparation.md).
+Detailed explanation on how to prepare an environment like the one assumed and used, check the **Preparation** document, available [here](../preparation/preparation.md).
 
 ## Demo Steps
 
@@ -21,8 +21,8 @@ In addition, make sure you cloned the two imported repositories respectively to 
 One more thing. If you decided to follow exactly all the steps and are using **Gitea**, you could export the following two environment variables upfront:
 
 ```bash
-export $GITEA_IP=ip-address
-export $GITEA_USER=user-name
+export GITEA_IP=ip-address
+export GITEA_USER=user-name
 ```
 
 *Make sure you substituted **ip-address** and **user-name** with the correct values.*
@@ -31,13 +31,13 @@ This way, all the commands that interact with a **Gitea** endpoint will match yo
 
 ### Without GitOps (CI/CD pipeline)
 
-Let's see how the things happen when we do not have **GitOps** implemented and we are using a CI/CD pipeline to deploy our application.
+Let's see how things happen when we do not have **GitOps** implemented, and we are using a CI/CD pipeline to deploy our application.
 
 Now, we should refer to a tool like **Jenkins**.
 
 Go to **Jenkins UI** and start the **pipeline-cicd** pipeline.
 
-After a while our application should be deployed
+After a while, our application should be deployed
 
 ```bash
 kubectl get pods,svc
@@ -57,9 +57,9 @@ kubectl get svc gitops-app-svc
 
 And visit it in a browser tab.
 
-Nice. Now, let's do a change. For example, add some text to the **gitops-app/app/index.php** file.
+Nice. Now, let's make a change. For example, add some text to the **gitops-app/app/index.php** file.
 
-Then stage, commit and push the changes to the repository
+Then stage, commit, and push the changes to the repository
 
 ```bash
 git status
@@ -79,7 +79,7 @@ git push
 
 Now, return to **Jenkins UI** and start the **pipeline-cicd** pipeline again.
 
-*Note that we are starting it manually for the sake of simplicity. In the real life it would be configured to trigger automatically via a webhook or by polling the repository periodically for changes.*
+*Note that we are starting it manually for the sake of simplicity. In real life, it would be configured to trigger automatically via a webhook or by polling the repository periodically for changes.*
 
 After a while, the new version of our application will be deployed to the cluster.
 
@@ -161,7 +161,7 @@ kubectl get svc -n argocd
 
 #### CLI Installation
 
-On a **Linux** distribution you could download the ***latest version*** of the CLI
+On a **Linux** distribution, you could download the ***latest version*** of the CLI
 
 ```bash
 curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
@@ -191,7 +191,7 @@ rm argocd-linux-amd64
 
 For other OSes, download the appropriate binary from here: <https://github.com/argoproj/argo-cd/releases/latest>
 
-Once done, you can check the CLI is working
+Once done, you can check that the CLI is working
 
 ```bash
 argocd version --client
@@ -211,7 +211,7 @@ Get the initial **admin** password
 argocd admin initial-password -n argocd
 ```
 
-And use it to login
+And use it to log in
 
 ```bash
 argocd login ARGOCD-IP
@@ -225,7 +225,7 @@ Now we can check both the server and CLI versions
 argocd version
 ```
 
-Next we can change the **admin** password
+Next, we can change the **admin** password
 
 ```bash
 argocd account update-password
@@ -297,15 +297,15 @@ argocd app create gitops-app-yaml --repo http://$GITEA_IP:3000/$GITEA_USER/gitop
 
 Note that if we want to use annotations, the above (the last part of the command) will change to `--annotations purpose=gitops-demo,apptype=yaml`
 
-However, as with Kubernetes, annotations and labels serve different purposes. Annotations are for metadata, while labels allows us to use them for filtering/narrowing down a list of resources.
+However, as with Kubernetes, annotations and labels serve different purposes. Annotations are for metadata, while labels allow us to use them for filtering/narrowing down a list of resources.
 
 Before we continue, do you remember that we mentioned ***declarative*** during the **ArgoCD** introduction?
 
-So far, we did not see anything that reminds of this.
+So far, we have not seen anything that reminds us of this.
 
 Let's tackle this issue.
 
-The above application, could be declared in **ArgoCD** following the declarative approach by using a manifest file (for example, `app.yaml`) like this
+The above application could be declared in **ArgoCD** following the declarative approach by using a manifest file (for example, `app.yaml`) like this
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -337,7 +337,7 @@ No matter how we created our first application in **ArgoCD**, we could ask for t
 argocd app list
 ```
 
-And then for details about the gitops-app
+And then for details about the **gitops-app**
 
 ```bash
 argocd app get gitops-app
@@ -353,13 +353,13 @@ Use the admin credentials.
 
 In the UI, we have the same - **the application is out of sync**.
 
-We can sync it either from the UI by going to **Applications** and clicking either **SYNC APPS** for all of the apps or just **SYNC** for particular app (the one that we have in our case) or by executing the following command
+We can sync it either from the UI by going to **Applications** and clicking either **SYNC APPS** for all of the apps or just **SYNC** for a particular app (the one that we have in our case), or by executing the following command
 
 ```bash
 argocd app sync gitops-app
 ```
 
-No matter the way you triggered synchronization, the app's resources will be deployed and this will be reflected both in the UI and on the CLI
+No matter the way you triggered synchronization, the app's resources will be deployed, and this will be reflected both in the UI and on the CLI
 
 ```bash
 argocd app list
@@ -381,13 +381,13 @@ Get the app URL and visit it
 minikube -p gitops service gitops-app-svc --url
 ```
 
-Let's delete one of application's resources and see what will happen. For example, the deployment
+Let's delete one of the application's resources and see what will happen. For example, the deployment
 
 ```bash
 kubectl delete deployment gitops-app
 ```
 
-After a while the deployment and everything managed by it will be gone
+After a while, the deployment and everything managed by it will be gone
 
 ```bash
 kubectl get all
@@ -413,7 +413,7 @@ Self-heal, when configuration drift is detected, will take considerably less tim
 
 Go ahead and enable self-healing either in the UI or on the CLI.
 
-Return in the UI and watch the self-healing taking place.
+Return to the UI and watch the self-healing taking place.
 
 Now, besides the information available in the UI, we can use a set of commands to explore our application and its state.
 
@@ -423,7 +423,7 @@ We can ask for the app's logs
 argocd app logs gitops-app
 ```
 
-We can check app's revision
+We can check the app's revision
 
 ```bash
 argocd app history gitops-app
@@ -453,11 +453,11 @@ And we could combine the additional blocks of information, for example, the oper
 argocd app get gitops-app --show-operation --output tree
 ```
 
-Of course, all the above plus more could be seen easily in the UI.
+Of course, all the above, plus more, could be seen easily in the UI.
 
 You could go ahead and change the application. For example, add some text to the **gitops-app/app/index.php** file.
 
-Then stage, commit and push the changes to the repository
+Then stage, commit, and push the changes to the repository
 
 ```bash
 git status
@@ -477,9 +477,9 @@ git push
 
 Now, return to **Jenkins UI** and start the **pipeline-gitops** pipeline.
 
-*Note that we are starting it manually for the sake of simplicity. In the real life it would be configured to trigger automatically via a webhook or by polling the repository periodically for changes.*
+*Note that we are starting it manually for the sake of simplicity. In real life, it would be configured to trigger automatically via a webhook or by polling the repository periodically for changes.*
 
-After a while, the new version of our application will be deployed to the cluster because the **GitOps operator** (***ArgoCD*** in our case) will capture that there is a change in the desired state and will make sure that the actual state is matching the desired one.
+After a while, the new version of our application will be deployed to the cluster because the **GitOps operator** (***ArgoCD*** in our case) will capture that there is a change in the desired state and will make sure that the actual state matches the desired one.
 
 Once the pipeline completes, you can observe the changes that will take place in the cluster.
 
@@ -509,7 +509,7 @@ argocd app create gitops-app-helm --repo http://$GITEA_IP:3000/$GITEA_USER/gitop
 
 *You must either substitute **$GITEA_IP** and **$GITEA_USER** with your values or make sure that you have exported upfront those environment variables with correct values.*
 
-Now, either use the UI or the ususal commands that you are already aware of, to explore our application and its state.
+Now, either use the UI or the usual commands that you are already aware of to explore our application and its state.
 
 ```bash
 argocd app list
@@ -523,7 +523,7 @@ Should you want, you can trigger the **GitOps** pipeline again and observe.
 
 You could go ahead and change the application. For example, add some text to the **gitops-app/app/index.php file**.
 
-Then stage, commit and push the changes to the repository
+Then stage, commit, and push the changes to the repository
 
 ```bash
 git status
@@ -543,9 +543,9 @@ git push
 
 Now, return to **Jenkins UI** and start the **pipeline-gitops** pipeline again.
 
-*Note that we are starting it manually for the sake of simplicity. In the real life it would be configured to trigger automatically via a webhook or by polling the repository periodically for changes.*
+*Note that we are starting it manually for the sake of simplicity. In real life, it would be configured to trigger automatically via a webhook or by polling the repository periodically for changes.*
 
-After a while, the new version of our application will be deployed to the cluster because the **GitOps operator** (***ArgoCD*** in our case) will capture that there is a change in the desired state and will make sure that the actual state is matching the desired one.
+After a while, the new version of our application will be deployed to the cluster because the **GitOps operator** (***ArgoCD*** in our case) will capture that there is a change in the desired state and will make sure that the actual state matches the desired one.
 
 Once the pipeline completes, you can observe the changes that will take place in the cluster.
 
@@ -581,7 +581,7 @@ Open the **gitops-app-infra/helm/gitops-app/values.yaml** file for editing.
 
 And change the service type to **NodePort**.
 
-Then save the changes, stage, commit and push them to the repository
+Then save the changes, stage, commit, and push them to the repository
 
 ```bash
 git status
@@ -601,7 +601,7 @@ git push
 
 Now, return to the UI and watch what will happen.
 
-Once, the synchronization is done, get the service URL again
+Once the synchronization is done, get the service URL again
 
 ```bash
 minikube -p gitops service gitops-app-helm-svc -n argo-app-helm --url
@@ -621,7 +621,7 @@ argocd app create gitops-app-kust --repo http://$GITEA_IP:3000/$GITEA_USER/gitop
 
 *You must either substitute **$GITEA_IP** and **$GITEA_USER** with your values or make sure that you have exported upfront those environment variables with correct values.*
 
-Now, either use the UI or the ususal commands that you are already aware of, to explore our application and its state.
+Now, either use the UI or the usual commands that you are already aware of to explore our application and its state.
 
 ```bash
 argocd app list
@@ -641,7 +641,7 @@ Should you want, you can trigger the **GitOps** pipeline again and observe.
 
 You could go ahead and change the application. For example, add some text to the **gitops-app/app/index.php file**.
 
-Then stage, commit and push the changes to the repository
+Then stage, commit, and push the changes to the repository
 
 ```bash
 git status
@@ -661,9 +661,9 @@ git push
 
 Now, return to **Jenkins UI** and start the **pipeline-gitops** pipeline again.
 
-*Note that we are starting it manually for the sake of simplicity. In the real life it would be configured to trigger automatically via a webhook or by polling the repository periodically for changes.*
+*Note that we are starting it manually for the sake of simplicity. In real life, it would be configured to trigger automatically via a webhook or by polling the repository periodically for changes.*
 
-After a while, the new version of our application will be deployed to the cluster because the **GitOps operator** (***ArgoCD*** in our case) will capture that there is a change in the desired state and will make sure that the actual state is matching the desired one.
+After a while, the new version of our application will be deployed to the cluster because the **GitOps operator** (***ArgoCD*** in our case) will capture that there is a change in the desired state and will make sure that the actual state matches the desired one.
 
 Once the pipeline completes, you can observe the changes that will take place in the cluster.
 
@@ -685,7 +685,7 @@ argocd app history gitops-app-kust
 
 #### Complete Removal
 
-First, we can explore and delete the applications either one-by-one or in batches.
+First, we can explore and delete the applications either one by one or in batches.
 
 Get a list of all applications
 
@@ -699,7 +699,7 @@ Or filter the list by label
 argocd app list -l apptype=yaml
 ```
 
-(Skip this) Delete single application
+(Skip this) Delete a single application
 
 ```bash
 argocd app delete gitops-app
@@ -711,7 +711,7 @@ argocd app delete gitops-app
 argocd app delete gitops-app-helm gitops-app-kust gitops-app-yaml
 ```
 
-(Use this) Or delete all that have particular label
+(Use this) Or delete all that have a particular label
 
 ```bash
 argocd app delete -l purpose=gitops-demo
